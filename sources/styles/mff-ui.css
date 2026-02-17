@@ -1,0 +1,1471 @@
+/* ==========================================================================
+   MFF UI - Comprehensive UI Stylesheet
+   Ported from MFF-NavApp (Tailwind CSS + inline styles + custom CSS)
+   into standalone CSS classes for vanilla JS usage.
+   All classes prefixed with `mff-` to avoid conflicts.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties
+   -------------------------------------------------------------------------- */
+
+:root {
+    --gold-primary: #D4AF37;
+    --gold-light: #F4E8C1;
+    --gold-dark: #8B7355;
+    --gold-metallic: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+    --gold-shine: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    --bg-dark: #0a0a0f;
+    --bg-panel: #1a1a24;
+    --bg-panel-hover: #252530;
+    --text-primary: #E8E8E8;
+    --text-secondary: #A0A0A0;
+    --border-gold: rgba(212, 175, 55, 0.3);
+    --border-gold-strong: rgba(212, 175, 55, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   2. Core Layout Classes
+   -------------------------------------------------------------------------- */
+
+.mff-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.mff-overlay * {
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   3. Bottom Navigation
+   -------------------------------------------------------------------------- */
+
+.mff-bottom-nav-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 915;
+    pointer-events: auto;
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: rgba(40, 40, 40, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.mff-bottom-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 10px;
+    border-radius: 21px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mff-bottom-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.mff-bottom-nav-btn.is-active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.mff-bottom-nav-btn .mff-nav-label {
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.mff-bottom-nav-btn:hover .mff-nav-label,
+.mff-bottom-nav-btn.is-active .mff-nav-label {
+    max-width: 100px;
+    opacity: 1;
+    margin-left: 8px;
+}
+
+.mff-bottom-nav-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Side Panel (Events, Zones, Friends, Menu)
+   -------------------------------------------------------------------------- */
+
+.mff-side-panel {
+    position: fixed;
+    top: 16px;
+    bottom: 80px;
+    left: 16px;
+    width: 85%;
+    max-width: 320px;
+    z-index: 912;
+    pointer-events: none;
+    background: rgba(40, 40, 40, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateX(-120%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+}
+
+.mff-side-panel.is-visible {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mff-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.mff-panel-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mff-panel-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.mff-panel-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.mff-panel-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.mff-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Floating Panel (Settings, Adjustments)
+   -------------------------------------------------------------------------- */
+
+.mff-floating-panel {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 913;
+    pointer-events: none;
+    width: 90%;
+    max-width: 380px;
+    background: rgba(40, 40, 40, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    max-height: 60vh;
+    overflow-y: auto;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.mff-floating-panel.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   6. Filter Tabs
+   -------------------------------------------------------------------------- */
+
+.mff-filter-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 12px 12px;
+}
+
+.mff-filter-tab {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.mff-filter-tab.is-active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* --------------------------------------------------------------------------
+   7. Cards (Events, Zones, Friends)
+   -------------------------------------------------------------------------- */
+
+.mff-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mff-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mff-card.is-expanded {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mff-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.mff-card-subtitle {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.mff-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.mff-card-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s, opacity 0.3s;
+    opacity: 0;
+}
+
+.mff-card.is-expanded .mff-card-detail {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mff-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.mff-tag {
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 10px;
+}
+
+.mff-favorite-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 2px;
+    transition: transform 0.2s;
+}
+
+.mff-favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+/* --------------------------------------------------------------------------
+   8. Slider (Gold-themed)
+   -------------------------------------------------------------------------- */
+
+.mff-slider-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.mff-slider-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    min-width: 80px;
+    flex-shrink: 0;
+}
+
+.mff-slider-value {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    min-width: 40px;
+    text-align: right;
+}
+
+.mff-slider {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #1a1a24, var(--gold-dark));
+    border-radius: 3px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    outline: none;
+}
+
+.mff-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+    border: 2px solid white;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.mff-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.mff-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+    border: 2px solid white;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.mff-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+}
+
+/* --------------------------------------------------------------------------
+   9. Toggle Switch
+   -------------------------------------------------------------------------- */
+
+.mff-toggle {
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+    transition: background 0.3s;
+    border: none;
+    padding: 0;
+}
+
+.mff-toggle.is-active {
+    background: rgba(255, 200, 120, 0.4);
+}
+
+.mff-toggle-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    background: linear-gradient(135deg, #fff, #e8d5a3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s;
+}
+
+.mff-toggle.is-active .mff-toggle-dot {
+    transform: translateX(16px);
+}
+
+/* --------------------------------------------------------------------------
+   10. Notification Bar
+   -------------------------------------------------------------------------- */
+
+.mff-notification-bar {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 20;
+    pointer-events: auto;
+    min-width: 200px;
+    max-width: 320px;
+}
+
+.mff-notification-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 8px;
+    animation: mff-slide-in 0.3s ease-out;
+    background: rgba(50, 50, 50, 0.7);
+}
+
+.mff-notification-item[data-type="event"] {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1));
+}
+
+.mff-notification-item[data-type="navigation"] {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.1));
+}
+
+.mff-notification-item[data-type="friend"] {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(249, 115, 22, 0.1));
+}
+
+.mff-notification-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.mff-notification-content {
+    flex: 1;
+}
+
+.mff-notification-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.mff-notification-message {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+}
+
+.mff-notification-close {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   12. Zone Detail Overlay
+   -------------------------------------------------------------------------- */
+
+.mff-zone-detail {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 914;
+    pointer-events: none;
+    width: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(40, 40, 40, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 16px;
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.3s;
+}
+
+.mff-zone-detail.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   14. Settings Tabs
+   -------------------------------------------------------------------------- */
+
+.mff-settings-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 12px;
+}
+
+.mff-settings-tab {
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.mff-settings-tab.is-active {
+    color: white;
+    border-bottom-color: var(--gold-primary);
+}
+
+/* --------------------------------------------------------------------------
+   15. Action Buttons
+   -------------------------------------------------------------------------- */
+
+.mff-btn {
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.mff-btn-primary {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold-primary);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.mff-btn-primary:hover {
+    background: rgba(212, 175, 55, 0.25);
+}
+
+.mff-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mff-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.mff-btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.mff-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+.mff-btn-block {
+    width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   16. Presets Grid
+   -------------------------------------------------------------------------- */
+
+.mff-presets-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   17. Section Title in Panels
+   -------------------------------------------------------------------------- */
+
+.mff-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 8px;
+    margin-top: 16px;
+    padding-left: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   18. Menu Items (MenuPanel)
+   -------------------------------------------------------------------------- */
+
+.mff-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mff-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mff-menu-item svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   19. View Mode Toggle Buttons
+   -------------------------------------------------------------------------- */
+
+.mff-view-toggle {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+}
+
+.mff-view-btn {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.2s;
+}
+
+.mff-view-btn.is-active {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold-primary);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   20. Color Picker
+   -------------------------------------------------------------------------- */
+
+.mff-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mff-color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mff-color-input {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+}
+
+/* --------------------------------------------------------------------------
+   21. Zone Editor
+   -------------------------------------------------------------------------- */
+
+.mff-zone-editor {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    bottom: 80px;
+    z-index: 14;
+    pointer-events: auto;
+    width: 320px;
+    background: rgba(40, 40, 40, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(120%);
+    transition: all 0.3s;
+}
+
+.mff-zone-editor.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* --------------------------------------------------------------------------
+   22. AR View
+   -------------------------------------------------------------------------- */
+
+.mff-ar-view {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    pointer-events: auto;
+    background: black;
+}
+
+.mff-ar-back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 31;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   23. Animations
+   -------------------------------------------------------------------------- */
+
+@keyframes mff-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mff-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mff-gold-shine {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes mff-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes mff-shimmer {
+    0% {
+        background-position: -200% center;
+    }
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   24. Scrollbar for Panels (gold-themed)
+   -------------------------------------------------------------------------- */
+
+.mff-side-panel ::-webkit-scrollbar {
+    width: 4px;
+}
+
+.mff-side-panel ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.mff-side-panel ::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+}
+
+.mff-side-panel ::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.5);
+}
+
+.mff-floating-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.mff-floating-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.mff-floating-panel::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+}
+
+.mff-floating-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.5);
+}
+
+.mff-zone-detail::-webkit-scrollbar {
+    width: 4px;
+}
+
+.mff-zone-detail::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.mff-zone-detail::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 2px;
+}
+
+.mff-zone-detail::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   25. Safe Area Padding
+   -------------------------------------------------------------------------- */
+
+.mff-safe-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+/* --------------------------------------------------------------------------
+   26. Status Dot (Online Indicator)
+   -------------------------------------------------------------------------- */
+
+.mff-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mff-status-dot.is-online {
+    background: #22c55e;
+}
+
+.mff-status-dot.is-offline {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   27. Badge (Event Count)
+   -------------------------------------------------------------------------- */
+
+.mff-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* --------------------------------------------------------------------------
+   28. Zone Mapping Editor
+   -------------------------------------------------------------------------- */
+
+.mff-mapping-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mff-mapping-input {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.mff-mapping-input:focus {
+    border-color: var(--gold-primary);
+}
+
+/* --------------------------------------------------------------------------
+   29. UI Overlay Container
+   -------------------------------------------------------------------------- */
+
+.mff-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 900;
+    pointer-events: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.mff-overlay * {
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   30. Backdrop
+   -------------------------------------------------------------------------- */
+
+.mff-backdrop {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   31. Header Info
+   -------------------------------------------------------------------------- */
+
+.mff-header-info {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    text-align: left;
+    pointer-events: none;
+    z-index: 910;
+}
+
+.mff-header-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(212, 175, 55, 0.8);
+    letter-spacing: 1px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.mff-header-subtitle {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 2px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   32. FPS Counter
+   -------------------------------------------------------------------------- */
+
+.mff-fps-counter {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    z-index: 910;
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   33. MiniMap
+   -------------------------------------------------------------------------- */
+
+.mff-minimap {
+    position: fixed;
+    bottom: 90px;
+    right: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 910;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.mff-minimap svg {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   34. Settings Panel - Wide variant & Tabs
+   -------------------------------------------------------------------------- */
+
+.mff-settings-wide {
+    max-width: 440px;
+    max-height: 70vh;
+}
+
+.mff-settings-header {
+    padding: 14px 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mff-stabs {
+    display: flex;
+    gap: 2px;
+    padding: 8px 12px;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    scrollbar-width: none;
+}
+
+.mff-stabs::-webkit-scrollbar {
+    display: none;
+}
+
+.mff-stab {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.mff-stab:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.mff-stab.is-active {
+    background: rgba(212, 175, 55, 0.15);
+    color: rgba(212, 175, 55, 0.9);
+}
+
+.mff-stab-content {
+    padding: 16px 20px;
+    overflow-y: auto;
+    max-height: calc(70vh - 120px);
+}
+
+/* --------------------------------------------------------------------------
+   35. Range Slider (gold-themed)
+   -------------------------------------------------------------------------- */
+
+.mff-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    cursor: pointer;
+}
+
+.mff-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.8);
+    border: 2px solid rgba(40, 40, 40, 0.8);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.mff-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.mff-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.8);
+    border: 2px solid rgba(40, 40, 40, 0.8);
+    cursor: pointer;
+}
+
+
+/* --------------------------------------------------------------------------
+   36. Number Input (manual value entry)
+   -------------------------------------------------------------------------- */
+
+.mff-number-input {
+    flex: 1;
+    padding: 5px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(212, 175, 55, 0.9);
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.mff-number-input:focus {
+    border-color: rgba(212, 175, 55, 0.6);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.mff-number-input::-webkit-inner-spin-button,
+.mff-number-input::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   37. Mobile Responsive
+   -------------------------------------------------------------------------- */
+
+/* Tablets and smaller */
+@media (max-width: 768px) {
+    .mff-bottom-nav-container {
+        bottom: max(12px, env(safe-area-inset-bottom, 12px));
+        gap: 4px;
+        padding: 5px;
+        border-radius: 24px;
+    }
+
+    .mff-bottom-nav-btn {
+        padding: 10px 8px;
+    }
+
+    .mff-bottom-nav-btn .mff-nav-label {
+        display: none;
+    }
+
+    .mff-side-panel {
+        top: 8px;
+        left: 8px;
+        bottom: 72px;
+        width: 90%;
+        max-width: 300px;
+        border-radius: 20px;
+    }
+
+    .mff-floating-panel {
+        right: 8px;
+        bottom: 72px;
+        width: 92%;
+        max-width: 360px;
+        max-height: 55vh;
+    }
+
+    .mff-settings-wide {
+        max-width: 360px;
+        max-height: 55vh;
+    }
+
+    .mff-zone-detail {
+        top: 8px;
+        right: 8px;
+        width: 260px;
+    }
+
+    .mff-header-info {
+        top: 8px;
+        left: 8px;
+    }
+
+    .mff-notification-bar {
+        top: 8px;
+        left: 8px;
+        max-width: 280px;
+    }
+
+    .mff-minimap {
+        bottom: 80px;
+        right: 8px;
+    }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+    .mff-bottom-nav-container {
+        bottom: max(8px, env(safe-area-inset-bottom, 8px));
+        left: 8px;
+        right: 8px;
+        transform: none;
+        justify-content: space-around;
+        gap: 2px;
+        padding: 4px;
+        border-radius: 20px;
+    }
+
+    .mff-bottom-nav-btn {
+        padding: 10px 6px;
+        border-radius: 16px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .mff-bottom-nav-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mff-side-panel {
+        top: 0;
+        left: 0;
+        bottom: 64px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .mff-floating-panel {
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        max-height: 50vh;
+    }
+
+    .mff-settings-wide {
+        max-width: 100%;
+        max-height: 50vh;
+    }
+
+    .mff-stab-content {
+        max-height: calc(50vh - 120px);
+    }
+
+    .mff-zone-detail {
+        top: auto;
+        bottom: 64px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-height: 50vh;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .mff-header-info {
+        top: max(8px, env(safe-area-inset-top, 8px));
+        left: 8px;
+    }
+
+    .mff-header-title {
+        font-size: 12px;
+    }
+
+    .mff-header-subtitle {
+        font-size: 9px;
+    }
+
+    .mff-notification-bar {
+        top: max(8px, env(safe-area-inset-top, 8px));
+        left: 8px;
+        right: 8px;
+        max-width: none;
+    }
+
+    .mff-notification-item {
+        padding: 8px 12px;
+    }
+
+    .mff-minimap {
+        display: none;
+    }
+
+    .mff-fps-counter {
+        top: max(8px, env(safe-area-inset-top, 8px));
+        font-size: 10px;
+    }
+
+    .mff-card {
+        padding: 12px;
+    }
+
+    .mff-card-title {
+        font-size: 13px;
+    }
+
+    .mff-panel-header {
+        padding: 12px 16px;
+    }
+
+    .mff-panel-header h2 {
+        font-size: 14px;
+    }
+
+    .mff-filter-tab {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Landscape phones */
+@media (max-height: 500px) and (orientation: landscape) {
+    .mff-bottom-nav-container {
+        bottom: 8px;
+        padding: 3px;
+    }
+
+    .mff-bottom-nav-btn {
+        padding: 8px 6px;
+    }
+
+    .mff-side-panel {
+        top: 4px;
+        bottom: 52px;
+        max-width: 280px;
+    }
+
+    .mff-floating-panel {
+        bottom: 52px;
+        max-height: 70vh;
+    }
+
+    .mff-minimap {
+        bottom: 56px;
+    }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+    .mff-bottom-nav-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .mff-panel-close {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+    }
+
+    .mff-filter-tab {
+        min-height: 40px;
+    }
+
+    .mff-btn {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+
+    .mff-card {
+        padding: 14px;
+    }
+
+    .mff-favorite-btn {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mff-number-input {
+        min-height: 40px;
+        font-size: 14px;
+    }
+
+    .mff-mapping-input {
+        min-height: 40px;
+        font-size: 14px;
+    }
+
+    .mff-range {
+        height: 6px;
+    }
+
+    .mff-range::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mff-range::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mff-toggle {
+        width: 44px;
+        height: 24px;
+        border-radius: 12px;
+    }
+
+    .mff-toggle-dot {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mff-toggle.is-active .mff-toggle-dot {
+        transform: translateX(20px);
+    }
+}
