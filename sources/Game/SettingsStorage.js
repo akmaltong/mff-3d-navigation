@@ -37,22 +37,22 @@ export class SettingsStorage
     {
         return {
             // Model transform
-            modelPosition: { x: 0, y: 0, z: 0 },
+            modelPosition: { x: -14, y: 0, z: 0 },
             modelRotation: { x: 0, y: 0, z: 0 },
-            modelScale: { x: 1, y: 1, z: 1 },
+            modelScale: { x: 0.5, y: 0.5, z: 0.5 },
 
             // Camera
-            cameraHeight: 30,
-            cameraPhi: 0.85,
-            cameraTheta: 0.785,
-            focusPointX: 0,
-            focusPointZ: 0,
+            cameraHeight: 32,
+            cameraPhi: 0.9738937226128359,
+            cameraTheta: -1.28,
+            focusPointX: -76.93895721435547,
+            focusPointZ: -1.1529325246810913,
 
             // Lighting
-            sunIntensity: 5,
-            ambientIntensity: 2.0,
-            sunPhi: 0.31,
-            sunTheta: 0.79,
+            sunIntensity: 2.2,
+            ambientIntensity: 1.4,
+            sunPhi: 0.83,
+            sunTheta: 3.85,
 
             // Gizmo
             gizmoEnabled: false,

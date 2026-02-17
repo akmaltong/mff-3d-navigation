@@ -5,11 +5,11 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-export default {
+export default ({ command }) => ({
     root: 'sources/', // Sources files (typically where index.html is)
     envDir: '../',  // Directory where the env file is located
     publicDir: '../static/', // Path from "root" to static assets (files that are served as they are)
-    base: '/mff-3d-navigation/', // GitHub Pages base path
+    base: command === 'build' ? '/mff-3d-navigation/' : './',
     server:
     {
         // https: true,
@@ -30,4 +30,4 @@ export default {
         nodePolyfills(),
         // basicSsl()
     ]
-}
+})

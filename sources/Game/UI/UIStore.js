@@ -27,7 +27,7 @@ export class UIStore
         this.activePanel = null
         /** @type {string|null} 'lighting'|'settings'|null */
         this.activeBottomPanel = null
-        this.showMiniMap = true
+        this.showMiniMap = false
         this.showPOI = false
         this.showFPS = false
         /** @type {import('./data/types.js').ViewMode} */
