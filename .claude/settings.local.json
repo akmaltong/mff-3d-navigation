@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(where:*)",
+      "Bash(where \"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\")",
+      "Bash(\"C:\\\\Program Files\\\\WinRAR\\\\UnRAR.exe\" x -o+ \"C:\\\\Users\\\\akmal\\\\Desktop\\\\Web_APP\\\\brunosimonfolio-2025\\\\MFF-NavApp_01.rar\" \"C:\\\\Users\\\\akmal\\\\Desktop\\\\Web_APP\\\\brunosimonfolio-2025\\\\MFF-NavApp_01\"\")",
+      "Bash(\"C:/Program Files/WinRAR/UnRAR.exe\" x -o+ \"C:/Users/akmal/Desktop/Web_APP/brunosimonfolio-2025/MFF-NavApp_01.rar\" \"C:/Users/akmal/Desktop/Web_APP/brunosimonfolio-2025/MFF-NavApp_01/\")"
+    ]
+  }
+}

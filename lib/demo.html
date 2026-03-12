@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lighting System Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            color: #fff;
+            min-width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        input[type="color"] {
+            width: 100%;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4fc3f7;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        button:hover {
+            background: #29b6f6;
+        }
+        .value-display {
+            font-size: 11px;
+            color: #4fc3f7;
+            text-align: right;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div id="ui">
+        <h1>🌤️ Lighting System</h1>
+        
+        <div class="control-group">
+            <label>Quality Level</label>
+            <select id="quality">
+                <option value="0">High (2048x2048)</option>
+                <option value="1">Performance (512x512)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Sun Intensity</label>
+            <input type="range" id="sunIntensity" min="0" max="20" step="0.1" value="5">
+            <div class="value-display" id="sunIntensityValue">5.0</div>
+        </div>
+
+        <div class="control-group">
+            <label>Ambient Intensity</label>
+            <input type="range" id="ambientIntensity" min="0" max="10" step="0.1" value="2">
+            <div class="value-display" id="ambientIntensityValue">2.0</div>
+        </div>
+
+        <div class="control-group">
+            <label>Sun Color</label>
+            <input type="color" id="sunColor" value="#ffffff">
+        </div>
+
+        <div class="control-group">
+            <label>Ambient Color</label>
+            <input type="color" id="ambientColor" value="#ffffff">
+        </div>
+
+        <div class="control-group">
+            <label>Sun Position (Phi)</label>
+            <input type="range" id="phi" min="0" max="1.57" step="0.01" value="0.63">
+            <div class="value-display" id="phiValue">0.63</div>
+        </div>
+
+        <div class="control-group">
+            <label>Sun Position (Theta)</label>
+            <input type="range" id="theta" min="-3.14" max="3.14" step="0.01" value="0.72">
+            <div class="value-display" id="thetaValue">0.72</div>
+        </div>
+
+        <div class="control-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="dayCycle">
+                <label for="dayCycle">Enable Day/Night Cycle</label>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="showHelpers" checked>
+                <label for="showHelpers">Show Helpers</label>
+            </div>
+        </div>
+
+        <button id="resetBtn">Reset Settings</button>
+    </div>
+
+    <div id="info">
+        🖱️ Drag to rotate camera • Scroll to zoom
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three'
+        import { Lighting } from './Lighting.js'
+        import { MeshDefaultMaterial } from './MeshDefaultMaterial.js'
+
+        // Scene setup
+        const container = document.getElementById('canvas-container')
+        const scene = new THREE.Scene()
+        scene.background = new THREE.Color('#1a1a2e')
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(
+            60,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        )
+        camera.position.set(8, 5, 8)
+        camera.lookAt(0, 0, 0)
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+        renderer.shadowMap.enabled = true
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        container.appendChild(renderer.domElement)
+
+        // Lighting system
+        const lighting = new Lighting(scene, camera, {
+            quality: 0,
+            useDayCycles: false
+        })
+
+        // Orbit controls (simple implementation)
+        let isDragging = false
+        let previousMousePosition = { x: 0, y: 0 }
+        let spherical = { theta: Math.PI / 4, phi: Math.PI / 3, radius: 10 }
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true
+            previousMousePosition = { x: e.clientX, y: e.clientY }
+        })
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return
+
+            const deltaX = e.clientX - previousMousePosition.x
+            const deltaY = e.clientY - previousMousePosition.y
+
+            spherical.theta -= deltaX * 0.005
+            spherical.phi -= deltaY * 0.005
+            spherical.phi = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, spherical.phi))
+
+            camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta)
+            camera.position.y = spherical.radius * Math.cos(spherical.phi)
+            camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+            camera.lookAt(0, 0, 0)
+
+            previousMousePosition = { x: e.clientX, y: e.clientY }
+        })
+
+        container.addEventListener('mouseup', () => { isDragging = false })
+        container.addEventListener('mouseleave', () => { isDragging = false })
+
+        container.addEventListener('wheel', (e) => {
+            spherical.radius += e.deltaY * 0.01
+            spherical.radius = Math.max(3, Math.min(30, spherical.radius))
+            camera.position.setFromSpherical(
+                new THREE.Spherical(spherical.radius, spherical.phi, spherical.theta)
+            )
+            camera.lookAt(0, 0, 0)
+        })
+
+        // Create objects with custom materials
+        // Gradient cube
+        const gradientMaterial = MeshDefaultMaterial.createGradient('#ff6b6b', '#4ecdc4', 'vertical')
+        const cube = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), gradientMaterial)
+        cube.position.set(-2.5, 0.75, 0)
+        cube.castShadow = true
+        cube.receiveShadow = true
+        scene.add(cube)
+
+        // Emissive sphere
+        const emissiveMaterial = MeshDefaultMaterial.createEmissive('#ffd93d', 2)
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.75, 32, 32), emissiveMaterial)
+        sphere.position.set(0, 0.75, 0)
+        sphere.castShadow = true
+        scene.add(sphere)
+
+        // Standard torus
+        const torusMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x6c5ce7,
+            roughness: 0.3,
+            metalness: 0.7
+        })
+        const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(0.6, 0.25, 128, 32), torusMaterial)
+        torus.position.set(2.5, 0.75, 0)
+        torus.castShadow = true
+        torus.receiveShadow = true
+        scene.add(torus)
+
+        // Floor with light bounce
+        const floorMaterial = new MeshDefaultMaterial({
+            colorNode: new THREE.Color(0x2d3436),
+            hasCoreShadows: true,
+            hasLightBounce: true,
+            hasDropShadows: true
+        })
+        floorMaterial.setLightingUniforms(lighting)
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), floorMaterial)
+        floor.rotation.x = -Math.PI / 2
+        floor.receiveShadow = true
+        scene.add(floor)
+
+        // Animation
+        let time = 0
+        function animate() {
+            requestAnimationFrame(animate)
+            time += 0.01
+
+            // Animate objects
+            cube.rotation.y += 0.01
+            sphere.position.y = 0.75 + Math.sin(time * 2) * 0.1
+            torus.rotation.x += 0.005
+            torus.rotation.y += 0.01
+
+            // Update lighting
+            lighting.update()
+
+            renderer.render(scene, camera)
+        }
+        animate()
+
+        // UI Controls
+        const qualitySelect = document.getElementById('quality')
+        const sunIntensitySlider = document.getElementById('sunIntensity')
+        const ambientIntensitySlider = document.getElementById('ambientIntensity')
+        const sunColorInput = document.getElementById('sunColor')
+        const ambientColorInput = document.getElementById('ambientColor')
+        const phiSlider = document.getElementById('phi')
+        const thetaSlider = document.getElementById('theta')
+        const dayCycleCheckbox = document.getElementById('dayCycle')
+        const showHelpersCheckbox = document.getElementById('showHelpers')
+        const resetBtn = document.getElementById('resetBtn')
+
+        // Value displays
+        const sunIntensityValue = document.getElementById('sunIntensityValue')
+        const ambientIntensityValue = document.getElementById('ambientIntensityValue')
+        const phiValue = document.getElementById('phiValue')
+        const thetaValue = document.getElementById('thetaValue')
+
+        // Event listeners
+        qualitySelect.addEventListener('change', (e) => {
+            lighting.setQuality(parseInt(e.target.value))
+        })
+
+        sunIntensitySlider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value)
+            lighting.intensity = value
+            lighting.light.intensity = value
+            sunIntensityValue.textContent = value.toFixed(1)
+        })
+
+        ambientIntensitySlider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value)
+            lighting.ambientLight.intensity = value
+            ambientIntensityValue.textContent = value.toFixed(1)
+        })
+
+        sunColorInput.addEventListener('input', (e) => {
+            lighting.light.color.set(e.target.value)
+        })
+
+        ambientColorInput.addEventListener('input', (e) => {
+            lighting.ambientLight.color.set(e.target.value)
+        })
+
+        phiSlider.addEventListener('input', (e) => {
+            lighting.phi = parseFloat(e.target.value)
+            phiValue.textContent = e.target.value
+        })
+
+        thetaSlider.addEventListener('input', (e) => {
+            lighting.theta = parseFloat(e.target.value)
+            thetaValue.textContent = e.target.value
+        })
+
+        dayCycleCheckbox.addEventListener('change', (e) => {
+            lighting.useDayCycles = e.target.checked
+        })
+
+        showHelpersCheckbox.addEventListener('change', (e) => {
+            lighting.setHelpersVisible(e.target.checked)
+        })
+
+        resetBtn.addEventListener('click', () => {
+            lighting.setQuality(0)
+            qualitySelect.value = '0'
+            
+            lighting.intensity = 5
+            lighting.light.intensity = 5
+            sunIntensitySlider.value = '5'
+            sunIntensityValue.textContent = '5.0'
+            
+            lighting.ambientLight.intensity = 2
+            ambientIntensitySlider.value = '2'
+            ambientIntensityValue.textContent = '2.0'
+            
+            lighting.light.color.set('#ffffff')
+            sunColorInput.value = '#ffffff'
+            
+            lighting.ambientLight.color.set('#ffffff')
+            ambientColorInput.value = '#ffffff'
+            
+            lighting.phi = 0.63
+            phiSlider.value = '0.63'
+            phiValue.textContent = '0.63'
+            
+            lighting.theta = 0.72
+            thetaSlider.value = '0.72'
+            thetaValue.textContent = '0.72'
+            
+            lighting.useDayCycles = false
+            dayCycleCheckbox.checked = false
+            
+            lighting.setHelpersVisible(true)
+            showHelpersCheckbox.checked = true
+        })
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight
+            camera.updateProjectionMatrix()
+            renderer.setSize(window.innerWidth, window.innerHeight)
+        })
+    </script>
+</body>
+</html>

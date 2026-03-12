@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Rendering System Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #1a1a2e;
+        }
+        #canvas-container { width: 100vw; height: 100vh; }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            border-radius: 12px;
+            color: #fff;
+            min-width: 300px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        h1 { font-size: 18px; margin-bottom: 15px; color: #4fc3f7; }
+        h2 { font-size: 14px; margin: 15px 0 10px; color: #888; border-top: 1px solid #444; padding-top: 10px; }
+        .control-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; margin-bottom: 5px; color: #aaa; }
+        input[type="range"] { width: 100%; margin-bottom: 5px; }
+        input[type="color"] { width: 100%; height: 30px; border: none; border-radius: 4px; cursor: pointer; }
+        select {
+            width: 100%; padding: 8px; background: #333; color: #fff;
+            border: 1px solid #555; border-radius: 4px; cursor: pointer;
+        }
+        button {
+            width: 100%; padding: 10px; background: #4fc3f7; color: #1a1a2e;
+            border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px;
+        }
+        button:hover { background: #29b6f6; }
+        .value-display { font-size: 11px; color: #4fc3f7; text-align: right; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        .checkbox-group input { width: auto; }
+        #info {
+            position: absolute; bottom: 20px; left: 20px;
+            background: rgba(0, 0, 0, 0.7); padding: 10px 15px;
+            border-radius: 8px; color: #888; font-size: 12px;
+        }
+        #fps-counter {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(0, 0, 0, 0.8); padding: 10px 15px;
+            border-radius: 8px; color: #4fc3f7; font-size: 14px;
+            font-weight: bold;
+        }
+        .fps-good { color: #4caf50; }
+        .fps-warn { color: #ff9800; }
+        .fps-bad { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="fps-counter">FPS: 60</div>
+    
+    <div id="ui">
+        <h1>🎨 Full Rendering System</h1>
+        
+        <h2>Quality</h2>
+        <div class="control-group">
+            <label>Quality Level</label>
+            <select id="quality">
+                <option value="0">High (2048x2048)</option>
+                <option value="1">Performance (512x512)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="autoQuality" checked>
+                <label for="autoQuality">Auto-adjust by FPS</label>
+            </div>
+        </div>
+
+        <h2>Lighting</h2>
+        <div class="control-group">
+            <label>Sun Intensity</label>
+            <input type="range" id="sunIntensity" min="0" max="20" step="0.1" value="5">
+            <div class="value-display" id="sunIntensityValue">5.0</div>
+        </div>
+        <div class="control-group">
+            <label>Ambient Intensity</label>
+            <input type="range" id="ambientIntensity" min="0" max="10" step="0.1" value="2">
+            <div class="value-display" id="ambientIntensityValue">2.0</div>
+        </div>
+        <div class="control-group">
+            <label>Sun Color</label>
+            <input type="color" id="sunColor" value="#ffffff">
+        </div>
+        <div class="control-group">
+            <label>Ambient Color</label>
+            <input type="color" id="ambientColor" value="#ffffff">
+        </div>
+        <div class="control-group">
+            <label>Sun Phi (height)</label>
+            <input type="range" id="phi" min="0" max="1.57" step="0.01" value="0.63">
+            <div class="value-display" id="phiValue">0.63</div>
+        </div>
+        <div class="control-group">
+            <label>Sun Theta (rotation)</label>
+            <input type="range" id="theta" min="-3.14" max="3.14" step="0.01" value="0.72">
+            <div class="value-display" id="thetaValue">0.72</div>
+        </div>
+        <div class="control-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="dayCycle">
+                <label for="dayCycle">Day/Night Cycle</label>
+            </div>
+        </div>
+
+        <h2>Post-Processing</h2>
+        <div class="control-group">
+            <label>Bloom Strength</label>
+            <input type="range" id="bloomStrength" min="0" max="2" step="0.05" value="0.25">
+            <div class="value-display" id="bloomStrengthValue">0.25</div>
+        </div>
+        <div class="control-group">
+            <label>Bloom Threshold</label>
+            <input type="range" id="bloomThreshold" min="0" max="1" step="0.01" value="1">
+            <div class="value-display" id="bloomThresholdValue">1.00</div>
+        </div>
+        <div class="control-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="showHelpers">
+                <label for="showHelpers">Show Helpers</label>
+            </div>
+        </div>
+
+        <button id="resetBtn">Reset Settings</button>
+    </div>
+
+    <div id="info">
+        🖱️ Drag to rotate • Scroll to zoom • Right-drag to pan
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three'
+        import { Lighting } from './Lighting.js'
+        import { Rendering } from './Rendering.js'
+        import { Quality } from './Quality.js'
+        import { MeshDefaultMaterial } from './MeshDefaultMaterial.js'
+
+        // Scene setup
+        const container = document.getElementById('canvas-container')
+        const scene = new THREE.Scene()
+        scene.background = new THREE.Color('#1a1a2e')
+        scene.fog = new THREE.Fog('#1a1a2e', 10, 50)
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+        camera.position.set(8, 5, 8)
+        camera.lookAt(0, 0, 0)
+
+        // Quality manager
+        const quality = new Quality({ level: 0, auto: true, targetFPS: 60 })
+
+        // Rendering
+        const canvas = document.createElement('canvas')
+        container.appendChild(canvas)
+        const rendering = new Rendering(scene, camera, canvas, {
+            quality: quality.level,
+            useBloom: true,
+            useDOF: false
+        })
+
+        // Lighting
+        const lighting = new Lighting(scene, camera, {
+            quality: quality.level,
+            useDayCycles: false
+        })
+
+        // Orbit controls
+        let isDragging = false, isPanning = false
+        let previousMousePosition = { x: 0, y: 0 }
+        let spherical = { theta: Math.PI / 4, phi: Math.PI / 3, radius: 10 }
+        let panOffset = new THREE.Vector3(0, 0, 0)
+
+        container.addEventListener('mousedown', (e) => {
+            isDragging = e.button === 0
+            isPanning = e.button === 2
+            previousMousePosition = { x: e.clientX, y: e.clientY }
+        })
+
+        container.addEventListener('contextmenu', (e) => e.preventDefault())
+
+        container.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMousePosition.x
+                const deltaY = e.clientY - previousMousePosition.y
+                spherical.theta -= deltaX * 0.005
+                spherical.phi -= deltaY * 0.005
+                spherical.phi = Math.max(0.1, Math.min(Math.PI / 2 - 0.1, spherical.phi))
+                previousMousePosition = { x: e.clientX, y: e.clientY }
+            } else if (isPanning) {
+                const deltaX = (e.clientX - previousMousePosition.x) * 0.05
+                const deltaY = (e.clientY - previousMousePosition.y) * 0.05
+                const right = new THREE.Vector3()
+                    .setFromSpherical(new THREE.Spherical(1, spherical.phi, spherical.theta + Math.PI / 2))
+                    .normalize()
+                const up = new THREE.Vector3(0, 1, 0)
+                panOffset.add(right.multiplyScalar(-deltaX))
+                panOffset.add(up.multiplyScalar(deltaY))
+                previousMousePosition = { x: e.clientX, y: e.clientY }
+            }
+        })
+
+        container.addEventListener('mouseup', () => { isDragging = false; isPanning = false })
+        container.addEventListener('mouseleave', () => { isDragging = false; isPanning = false })
+
+        container.addEventListener('wheel', (e) => {
+            spherical.radius += e.deltaY * 0.01
+            spherical.radius = Math.max(3, Math.min(30, spherical.radius))
+        })
+
+        // Update camera
+        function updateCamera() {
+            const target = panOffset.clone()
+            camera.position.x = target.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta)
+            camera.position.y = target.y + spherical.radius * Math.cos(spherical.phi)
+            camera.position.z = target.z + spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+            camera.lookAt(target)
+            lighting.focusPoint.copy(target)
+        }
+
+        // Create objects
+        // Gradient cube
+        const gradientMaterial = MeshDefaultMaterial.createGradient('#ff6b6b', '#4ecdc4', 'vertical')
+        const cube = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), gradientMaterial)
+        cube.position.set(-2.5, 0.75, 0)
+        cube.castShadow = true
+        cube.receiveShadow = true
+        scene.add(cube)
+
+        // Emissive sphere
+        const emissiveMaterial = MeshDefaultMaterial.createEmissive('#ffd93d', 2)
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.75, 32, 32), emissiveMaterial)
+        sphere.position.set(0, 0.75, 0)
+        sphere.castShadow = true
+        scene.add(sphere)
+
+        // Torus knot
+        const torusMaterial = new THREE.MeshStandardMaterial({ color: 0x6c5ce7, roughness: 0.3, metalness: 0.7 })
+        const torus = new THREE.Mesh(new THREE.TorusKnotGeometry(0.6, 0.25, 128, 32), torusMaterial)
+        torus.position.set(2.5, 0.75, 0)
+        torus.castShadow = true
+        torus.receiveShadow = true
+        scene.add(torus)
+
+        // Floor
+        const floorMaterial = new MeshDefaultMaterial({
+            colorNode: new THREE.Color(0x2d3436),
+            hasCoreShadows: true,
+            hasLightBounce: true,
+            hasDropShadows: true
+        })
+        floorMaterial.setLightingUniforms(lighting)
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMaterial)
+        floor.rotation.x = -Math.PI / 2
+        floor.receiveShadow = true
+        scene.add(floor)
+
+        // Grid helper
+        const gridHelper = new THREE.GridHelper(30, 30, 0x444444, 0x222222)
+        gridHelper.position.y = 0.01
+        scene.add(gridHelper)
+
+        // Animation
+        let time = 0
+        const fpsCounter = document.getElementById('fps-counter')
+        
+        function animate() {
+            requestAnimationFrame(animate)
+            time += 0.01
+
+            // Animate objects
+            cube.rotation.y += 0.01
+            sphere.position.y = 0.75 + Math.sin(time * 2) * 0.1
+            torus.rotation.x += 0.005
+            torus.rotation.y += 0.01
+
+            // Update systems
+            updateCamera()
+            lighting.update()
+            rendering.render()
+
+            // Update FPS display
+            const fps = quality.getCurrentFPS()
+            fpsCounter.textContent = `FPS: ${fps}`
+            fpsCounter.className = fps >= 50 ? 'fps-good' : fps >= 30 ? 'fps-warn' : 'fps-bad'
+        }
+        animate()
+
+        // UI Controls
+        const setupUI = () => {
+            const qualitySelect = document.getElementById('quality')
+            const autoQualityCheck = document.getElementById('autoQuality')
+            const sunIntensitySlider = document.getElementById('sunIntensity')
+            const ambientIntensitySlider = document.getElementById('ambientIntensity')
+            const sunColorInput = document.getElementById('sunColor')
+            const ambientColorInput = document.getElementById('ambientColor')
+            const phiSlider = document.getElementById('phi')
+            const thetaSlider = document.getElementById('theta')
+            const dayCycleCheck = document.getElementById('dayCycle')
+            const showHelpersCheck = document.getElementById('showHelpers')
+            const bloomStrengthSlider = document.getElementById('bloomStrength')
+            const bloomThresholdSlider = document.getElementById('bloomThreshold')
+            const resetBtn = document.getElementById('resetBtn')
+
+            const displays = {
+                sunIntensity: document.getElementById('sunIntensityValue'),
+                ambientIntensity: document.getElementById('ambientIntensityValue'),
+                phi: document.getElementById('phiValue'),
+                theta: document.getElementById('thetaValue'),
+                bloomStrength: document.getElementById('bloomStrengthValue'),
+                bloomThreshold: document.getElementById('bloomThresholdValue')
+            }
+
+            qualitySelect.addEventListener('change', (e) => {
+                const level = parseInt(e.target.value)
+                quality.set(level)
+                rendering.setQuality(level)
+                lighting.setQuality(level)
+            })
+
+            autoQualityCheck.addEventListener('change', (e) => {
+                quality.auto = e.target.checked
+                if (e.target.checked) quality.startMonitoring()
+                else quality.stopMonitoring()
+            })
+
+            sunIntensitySlider.addEventListener('input', (e) => {
+                const v = parseFloat(e.target.value)
+                lighting.intensity = v
+                lighting.light.intensity = v
+                displays.sunIntensity.textContent = v.toFixed(1)
+            })
+
+            ambientIntensitySlider.addEventListener('input', (e) => {
+                const v = parseFloat(e.target.value)
+                lighting.ambientLight.intensity = v
+                displays.ambientIntensity.textContent = v.toFixed(1)
+            })
+
+            sunColorInput.addEventListener('input', (e) => lighting.light.color.set(e.target.value))
+            ambientColorInput.addEventListener('input', (e) => lighting.ambientLight.color.set(e.target.value))
+
+            phiSlider.addEventListener('input', (e) => {
+                lighting.phi = parseFloat(e.target.value)
+                displays.phi.textContent = e.target.value
+            })
+
+            thetaSlider.addEventListener('input', (e) => {
+                lighting.theta = parseFloat(e.target.value)
+                displays.theta.textContent = e.target.value
+            })
+
+            dayCycleCheck.addEventListener('change', (e) => lighting.useDayCycles = e.target.checked)
+            showHelpersCheck.addEventListener('change', (e) => lighting.setHelpersVisible(e.target.checked))
+
+            bloomStrengthSlider.addEventListener('input', (e) => {
+                const v = parseFloat(e.target.value)
+                rendering.setBloom({ strength: v })
+                displays.bloomStrength.textContent = v.toFixed(2)
+            })
+
+            bloomThresholdSlider.addEventListener('input', (e) => {
+                const v = parseFloat(e.target.value)
+                rendering.setBloom({ threshold: v })
+                displays.bloomThreshold.textContent = v.toFixed(2)
+            })
+
+            resetBtn.addEventListener('click', () => {
+                quality.set(0); qualitySelect.value = '0'
+                quality.auto = true; autoQualityCheck.checked = true
+                quality.startMonitoring()
+                
+                lighting.intensity = 5; lighting.light.intensity = 5
+                sunIntensitySlider.value = '5'; displays.sunIntensity.textContent = '5.0'
+                
+                lighting.ambientLight.intensity = 2
+                ambientIntensitySlider.value = '2'; displays.ambientIntensity.textContent = '2.0'
+                
+                lighting.light.color.set('#ffffff'); sunColorInput.value = '#ffffff'
+                lighting.ambientLight.color.set('#ffffff'); ambientColorInput.value = '#ffffff'
+                
+                lighting.phi = 0.63; phiSlider.value = '0.63'; displays.phi.textContent = '0.63'
+                lighting.theta = 0.72; thetaSlider.value = '0.72'; displays.theta.textContent = '0.72'
+                
+                lighting.useDayCycles = false; dayCycleCheck.checked = false
+                lighting.setHelpersVisible(false); showHelpersCheck.checked = false
+                
+                rendering.setBloom({ strength: 0.25, threshold: 1 })
+                bloomStrengthSlider.value = '0.25'; displays.bloomStrength.textContent = '0.25'
+                bloomThresholdSlider.value = '1'; displays.bloomThreshold.textContent = '1.00'
+            })
+        }
+
+        setupUI()
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight
+            camera.updateProjectionMatrix()
+            rendering.setSize(window.innerWidth, window.innerHeight)
+        })
+    </script>
+</body>
+</html>
