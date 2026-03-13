@@ -520,12 +520,17 @@ export class Player
         {
             if(!this.game.view.focusPoint.isTracking)
             {
-                // Wait a few frames in case it a multi-touch
-                this.game.ticker.wait(5, () =>
+                // In game/map mode, don't snap camera back to car
+                const store = this.game.uiOverlay?.store
+                if(!(store && store.gameMode))
                 {
-                    if(this.game.inputs.nipple.active)
-                        this.game.view.focusPoint.isTracking = true
-                })
+                    // Wait a few frames in case it a multi-touch
+                    this.game.ticker.wait(5, () =>
+                    {
+                        if(this.game.inputs.nipple.active)
+                            this.game.view.focusPoint.isTracking = true
+                    })
+                }
             }
             this.accelerating = Math.pow(this.game.inputs.nipple.progress, 3)
             // this.boosting = this.game.inputs.nipple.progress > 0.999

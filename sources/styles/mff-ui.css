@@ -1410,14 +1410,16 @@
 
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas {
         width: auto !important;
-        height: 90% !important;
-        max-height: calc(100vh - 80px);
+        height: 90vh !important;
+        max-height: calc(100vh - 80px) !important;
+        aspect-ratio: auto !important;
     }
 
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas img,
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas svg {
         width: 100% !important;
         height: 100% !important;
+        object-fit: contain !important;
     }
 
     /* Hide vehicle controls on mobile */
