@@ -598,12 +598,21 @@ export class View
 
     setMapControls()
     {
+        // Debug overlay for mobile touch testing
+        this._debugEl = document.createElement('div')
+        this._debugEl.style.cssText = 'position:fixed;top:60px;left:10px;z-index:9999;color:lime;font-size:12px;font-family:monospace;background:rgba(0,0,0,0.7);padding:6px;pointer-events:none;white-space:pre;max-width:300px'
+        document.body.appendChild(this._debugEl)
+        this._debugLog = (msg) => { this._debugEl.textContent = msg }
+
         this.game.inputs.addActions([
             { name: 'viewMapPointer', categories: [ 'intro', 'wandering' ], keys: [ 'Pointer.any' ] },
         ])
 
         this.game.inputs.events.on('viewMapPointer', (action) =>
         {
+            const ptr = this.game.inputs.pointer
+            this._debugLog(`trigger:${action.trigger} active:${action.active}\nmode:${ptr.mode} touches:${ptr.touches.length}\ndelta:${ptr.delta.x.toFixed(1)},${ptr.delta.y.toFixed(1)}\nviewMode:${this.mode} isTrack:${this.focusPoint.isTracking}`)
+
             if(this.mode === View.MODE_DEFAULT)
             {
                 // Focus point
