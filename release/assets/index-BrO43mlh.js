@@ -52620,23 +52620,23 @@ var<${s}> ${e} : ${h};`;
       }), addEventListener("mouseup", (r) => {
         r.preventDefault(), this.upcomingDown = false;
       }), this.element.addEventListener("touchmove", (r) => {
-        this.mode = _Pointer.MODE_TOUCH, this.upcomingTouches = [
+        r.preventDefault(), this.mode = _Pointer.MODE_TOUCH, this.upcomingTouches = [
           ...r.touches
         ];
         let s = 0, o = 0;
         for (const a of this.upcomingTouches) s += a.clientX, o += a.clientY;
         s /= this.upcomingTouches.length, o /= this.upcomingTouches.length, this.upcoming.x = s, this.upcoming.y = o;
       }, {
-        passive: true
+        passive: false
       }), this.element.addEventListener("touchstart", (r) => {
-        this.mode = _Pointer.MODE_TOUCH, this.upcomingDown = true, this.upcomingTouches = [
+        r.preventDefault(), this.mode = _Pointer.MODE_TOUCH, this.upcomingDown = true, this.upcomingTouches = [
           ...r.touches
         ];
         let s = 0, o = 0;
         for (const a of this.upcomingTouches) s += a.clientX, o += a.clientY;
         s /= this.upcomingTouches.length, o /= this.upcomingTouches.length, this.current.x = s, this.current.y = o, this.upcoming.x = s, this.upcoming.y = o;
       }, {
-        passive: true
+        passive: false
       }), this.element.addEventListener("touchend", (r) => {
         r.preventDefault(), this.upcomingTouches = [
           ...r.touches
@@ -85256,7 +85256,7 @@ https://github.com/browserify/crypto-browserify`);
           d.multiplyScalar(10 / f), this.focusPoint.position.x -= d.x * 2, this.focusPoint.position.z -= d.y * 2, this.zoom.baseRatio += this.game.inputs.pointer.pinch.distanceDelta * 5e-3, this.zoom.baseRatio = clamp$3(this.zoom.baseRatio, 0, 1);
         }
       });
-      const e = this.game.canvasElement;
+      const e = this.game.domElement;
       let r = false, s = 0, o = 0, a = 0;
       e.addEventListener("touchstart", (c) => {
         if (this.mode !== _View.MODE_DEFAULT) return;
@@ -85266,6 +85266,7 @@ https://github.com/browserify/crypto-browserify`);
         passive: true
       }), e.addEventListener("touchmove", (c) => {
         if (!r || this.mode !== _View.MODE_DEFAULT) return;
+        c.preventDefault();
         const d = this._touchAvg(c.touches), f = d.x - s, p = d.y - o;
         this.focusPoint.isTracking = false, this.focusPoint.magnet.active = false;
         const v = new Vector2(f, p);
@@ -85280,7 +85281,7 @@ https://github.com/browserify/crypto-browserify`);
           a = M;
         }
       }, {
-        passive: true
+        passive: false
       });
       const h = (c) => {
         if (c.touches.length === 0) r = false, a = 0;
@@ -95234,7 +95235,7 @@ https://github.com/browserify/crypto-browserify`);
       }, this.overlay = {
         moveOnTop: () => {
         }
-      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-CqOzTOKv.js").then(async (m) => {
+      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-Dk8k2CLz.js").then(async (m) => {
         await m.__tla;
         return m;
       }), [], import.meta.url), this.physics = new Physics(), this.wireframe = new PhysicsWireframe(), this.physicalVehicle = new PhysicsVehicle(), this.player = new Player(), this.reveal = new Reveal(), this.world.step(1), this.reveal.distance.value = 99999, this.reveal.updateStep(1), this.reveal.update = this.reveal.update.bind(this.reveal), this.ticker.events.on("tick", this.reveal.update, 10), this.settingsStorage = new SettingsStorage(), this.settingsStorage.loadZonePositions(zones), this.poiManager = new POIManager(), this.navMeshSystem = new NavMeshSystem(), this.navMeshSystem.load("Navmesh.glb").catch((s) => console.warn("NavMesh load failed:", s)), this.uiOverlay = new UIOverlay(), this.settingsStorage.applySettings(), this.focusPointGizmo.setVisible(false), this.uiOverlay.store.set("gameMode", true), this.view.focusPoint.isTracking = false, this.view.focusPoint.magnet.active = false;

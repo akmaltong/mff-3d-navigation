@@ -631,14 +631,15 @@ export class View
             }
         })
 
-        // --- Direct touch handling on canvas (bypasses Inputs/Pointer chain) ---
-        const canvas = this.game.canvasElement
+        // --- Direct touch handling on game element (bypasses Inputs/Pointer chain) ---
+        // Use game container (not document) so we don't block UI button taps
+        const touchTarget = this.game.domElement
         let touchActive = false
         let lastTouchX = 0
         let lastTouchY = 0
         let lastPinchDist = 0
 
-        canvas.addEventListener('touchstart', (e) =>
+        touchTarget.addEventListener('touchstart', (e) =>
         {
             if(this.mode !== View.MODE_DEFAULT) return
             const avg = this._touchAvg(e.touches)
@@ -648,9 +649,11 @@ export class View
             if(e.touches.length >= 2) lastPinchDist = this._touchPinchDist(e.touches)
         }, { passive: true })
 
-        canvas.addEventListener('touchmove', (e) =>
+        touchTarget.addEventListener('touchmove', (e) =>
         {
             if(!touchActive || this.mode !== View.MODE_DEFAULT) return
+
+            e.preventDefault()
 
             const avg = this._touchAvg(e.touches)
             const dx = avg.x - lastTouchX
@@ -683,7 +686,7 @@ export class View
                 }
                 lastPinchDist = dist
             }
-        }, { passive: true })
+        }, { passive: false })
 
         const onTouchEnd = (e) =>
         {
@@ -701,8 +704,8 @@ export class View
                 else lastPinchDist = 0
             }
         }
-        canvas.addEventListener('touchend', onTouchEnd, { passive: true })
-        canvas.addEventListener('touchcancel', onTouchEnd, { passive: true })
+        touchTarget.addEventListener('touchend', onTouchEnd, { passive: true })
+        touchTarget.addEventListener('touchcancel', onTouchEnd, { passive: true })
     }
 
     _touchAvg(touches)
