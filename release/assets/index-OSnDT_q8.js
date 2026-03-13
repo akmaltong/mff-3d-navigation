@@ -54938,7 +54938,10 @@ var<${s}> ${e} : ${h};`;
           ]
         }
       ]), this.events.on("nipplePointer", (e) => {
-        this.mode === _Inputs.MODE_TOUCH && this.nipple.updateFromPointer(this.pointer, e);
+        var _a2, _b;
+        if (this.mode !== _Inputs.MODE_TOUCH) return;
+        const r = (_b = (_a2 = this.game) == null ? void 0 : _a2.uiOverlay) == null ? void 0 : _b.store;
+        r && r.gameMode || this.nipple.updateFromPointer(this.pointer, e);
       });
     }
     addActions(e) {
@@ -85244,18 +85247,66 @@ https://github.com/browserify/crypto-browserify`);
             "Pointer.any"
           ]
         }
-      ]), this.game.inputs.events.on("viewMapPointer", (e) => {
-        if (this.mode === _View.MODE_DEFAULT && e.active) {
-          if (this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 1) {
-            this.focusPoint.isTracking = false, this.focusPoint.magnet.active = false;
-            const r = new Vector2(this.game.inputs.pointer.delta.x, this.game.inputs.pointer.delta.y);
-            r.rotateAround(new Vector2(), -this.spherical.theta);
-            const s = Math.min(this.game.viewport.width, this.game.viewport.height);
-            r.multiplyScalar(10 / s), this.focusPoint.position.x -= r.x * 2, this.focusPoint.position.z -= r.y * 2;
-          }
-          this.zoom.baseRatio += this.game.inputs.pointer.pinch.distanceDelta * 5e-3, this.zoom.baseRatio = clamp$3(this.zoom.baseRatio, 0, 1);
+      ]), this.game.inputs.events.on("viewMapPointer", (c) => {
+        if (this.game.inputs.pointer.mode === Pointer.MODE_MOUSE && this.mode === _View.MODE_DEFAULT && c.active) {
+          this.focusPoint.isTracking = false, this.focusPoint.magnet.active = false;
+          const d = new Vector2(this.game.inputs.pointer.delta.x, this.game.inputs.pointer.delta.y);
+          d.rotateAround(new Vector2(), -this.spherical.theta);
+          const f = Math.min(this.game.viewport.width, this.game.viewport.height);
+          d.multiplyScalar(10 / f), this.focusPoint.position.x -= d.x * 2, this.focusPoint.position.z -= d.y * 2, this.zoom.baseRatio += this.game.inputs.pointer.pinch.distanceDelta * 5e-3, this.zoom.baseRatio = clamp$3(this.zoom.baseRatio, 0, 1);
         }
       });
+      const e = this.game.canvasElement;
+      let r = false, s = 0, o = 0, a = 0;
+      e.addEventListener("touchstart", (c) => {
+        if (this.mode !== _View.MODE_DEFAULT) return;
+        const d = this._touchAvg(c.touches);
+        s = d.x, o = d.y, r = true, c.touches.length >= 2 && (a = this._touchPinchDist(c.touches));
+      }, {
+        passive: true
+      }), e.addEventListener("touchmove", (c) => {
+        if (!r || this.mode !== _View.MODE_DEFAULT) return;
+        const d = this._touchAvg(c.touches), f = d.x - s, p = d.y - o;
+        this.focusPoint.isTracking = false, this.focusPoint.magnet.active = false;
+        const v = new Vector2(f, p);
+        v.rotateAround(new Vector2(), -this.spherical.theta);
+        const x = Math.min(this.game.viewport.width, this.game.viewport.height);
+        if (v.multiplyScalar(10 / x), this.focusPoint.position.x -= v.x * 2, this.focusPoint.position.z -= v.y * 2, s = d.x, o = d.y, c.touches.length >= 2) {
+          const M = this._touchPinchDist(c.touches);
+          if (a > 0) {
+            const P = M - a;
+            this.zoom.baseRatio += P * 5e-3, this.zoom.baseRatio = clamp$3(this.zoom.baseRatio, 0, 1);
+          }
+          a = M;
+        }
+      }, {
+        passive: true
+      });
+      const h = (c) => {
+        if (c.touches.length === 0) r = false, a = 0;
+        else {
+          const d = this._touchAvg(c.touches);
+          s = d.x, o = d.y, c.touches.length >= 2 ? a = this._touchPinchDist(c.touches) : a = 0;
+        }
+      };
+      e.addEventListener("touchend", h, {
+        passive: true
+      }), e.addEventListener("touchcancel", h, {
+        passive: true
+      });
+    }
+    _touchAvg(e) {
+      let r = 0, s = 0;
+      for (let o = 0; o < e.length; o++) r += e[o].clientX, s += e[o].clientY;
+      return {
+        x: r / e.length,
+        y: s / e.length
+      };
+    }
+    _touchPinchDist(e) {
+      if (e.length < 2) return 0;
+      const r = e[0].clientX - e[1].clientX, s = e[0].clientY - e[1].clientY;
+      return Math.sqrt(r * r + s * s);
     }
     update() {
       if (this.mode === _View.MODE_DEFAULT && this.game.inputs.gamepad.joysticks.right.active && !this.cinematic.active) {
@@ -95183,7 +95234,7 @@ https://github.com/browserify/crypto-browserify`);
       }, this.overlay = {
         moveOnTop: () => {
         }
-      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-YH54bHyc.js").then(async (m) => {
+      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-CIRIdbpJ.js").then(async (m) => {
         await m.__tla;
         return m;
       }), [], import.meta.url), this.physics = new Physics(), this.wireframe = new PhysicsWireframe(), this.physicalVehicle = new PhysicsVehicle(), this.player = new Player(), this.reveal = new Reveal(), this.world.step(1), this.reveal.distance.value = 99999, this.reveal.updateStep(1), this.reveal.update = this.reveal.update.bind(this.reveal), this.ticker.events.on("tick", this.reveal.update, 10), this.settingsStorage = new SettingsStorage(), this.settingsStorage.loadZonePositions(zones), this.poiManager = new POIManager(), this.navMeshSystem = new NavMeshSystem(), this.navMeshSystem.load("Navmesh.glb").catch((s) => console.warn("NavMesh load failed:", s)), this.uiOverlay = new UIOverlay(), this.settingsStorage.applySettings(), this.focusPointGizmo.setVisible(false), this.uiOverlay.store.set("gameMode", true), this.view.focusPoint.isTracking = false, this.view.focusPoint.magnet.active = false;

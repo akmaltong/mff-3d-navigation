@@ -598,52 +598,126 @@ export class View
 
     setMapControls()
     {
-        // Debug overlay for mobile touch testing
-        this._debugEl = document.createElement('div')
-        this._debugEl.style.cssText = 'position:fixed;top:60px;left:10px;z-index:9999;color:lime;font-size:12px;font-family:monospace;background:rgba(0,0,0,0.7);padding:6px;pointer-events:none;white-space:pre;max-width:300px'
-        document.body.appendChild(this._debugEl)
-        this._debugLog = (msg) => { this._debugEl.textContent = msg }
-
+        // --- Mouse drag via Inputs/Pointer system (works reliably on desktop) ---
         this.game.inputs.addActions([
             { name: 'viewMapPointer', categories: [ 'intro', 'wandering' ], keys: [ 'Pointer.any' ] },
         ])
 
         this.game.inputs.events.on('viewMapPointer', (action) =>
         {
-            const ptr = this.game.inputs.pointer
-            this._debugLog(`trigger:${action.trigger} active:${action.active}\nmode:${ptr.mode} touches:${ptr.touches.length}\ndelta:${ptr.delta.x.toFixed(1)},${ptr.delta.y.toFixed(1)}\nviewMode:${this.mode} isTrack:${this.focusPoint.isTracking}`)
+            // Only handle mouse — touch is handled by direct listeners below
+            if(this.game.inputs.pointer.mode !== Pointer.MODE_MOUSE) return
 
             if(this.mode === View.MODE_DEFAULT)
             {
-                // Focus point
                 if(action.active)
                 {
-                    // Map
-                    if(this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 1)
-                    {
-                        this.focusPoint.isTracking = false
-                        this.focusPoint.magnet.active = false
-                        
-                        const mapMovement = new THREE.Vector2(this.game.inputs.pointer.delta.x, this.game.inputs.pointer.delta.y)                    
-                        mapMovement.rotateAround(new THREE.Vector2(), -this.spherical.theta)
+                    this.focusPoint.isTracking = false
+                    this.focusPoint.magnet.active = false
+                    
+                    const mapMovement = new THREE.Vector2(this.game.inputs.pointer.delta.x, this.game.inputs.pointer.delta.y)                    
+                    mapMovement.rotateAround(new THREE.Vector2(), -this.spherical.theta)
 
-                        const smallestSide = Math.min(this.game.viewport.width, this.game.viewport.height)
-                        mapMovement.multiplyScalar(10 / smallestSide)
-                        
-                        this.focusPoint.position.x -= mapMovement.x * 2
-                        this.focusPoint.position.z -= mapMovement.y * 2
-                    }
+                    const smallestSide = Math.min(this.game.viewport.width, this.game.viewport.height)
+                    mapMovement.multiplyScalar(10 / smallestSide)
+                    
+                    this.focusPoint.position.x -= mapMovement.x * 2
+                    this.focusPoint.position.z -= mapMovement.y * 2
 
-                    // Pinch
+                    // Pinch (mouse wheel handled separately via zoom action)
                     this.zoom.baseRatio += this.game.inputs.pointer.pinch.distanceDelta * 0.005
                     this.zoom.baseRatio = clamp(this.zoom.baseRatio, 0, 1)
                 }
-                else if(action.trigger === 'end')
-                {
-                    // Touch ended — keep camera position, don't snap back
-                }
             }
         })
+
+        // --- Direct touch handling on canvas (bypasses Inputs/Pointer chain) ---
+        const canvas = this.game.canvasElement
+        let touchActive = false
+        let lastTouchX = 0
+        let lastTouchY = 0
+        let lastPinchDist = 0
+
+        canvas.addEventListener('touchstart', (e) =>
+        {
+            if(this.mode !== View.MODE_DEFAULT) return
+            const avg = this._touchAvg(e.touches)
+            lastTouchX = avg.x
+            lastTouchY = avg.y
+            touchActive = true
+            if(e.touches.length >= 2) lastPinchDist = this._touchPinchDist(e.touches)
+        }, { passive: true })
+
+        canvas.addEventListener('touchmove', (e) =>
+        {
+            if(!touchActive || this.mode !== View.MODE_DEFAULT) return
+
+            const avg = this._touchAvg(e.touches)
+            const dx = avg.x - lastTouchX
+            const dy = avg.y - lastTouchY
+
+            this.focusPoint.isTracking = false
+            this.focusPoint.magnet.active = false
+
+            const mapMovement = new THREE.Vector2(dx, dy)
+            mapMovement.rotateAround(new THREE.Vector2(), -this.spherical.theta)
+
+            const smallestSide = Math.min(this.game.viewport.width, this.game.viewport.height)
+            mapMovement.multiplyScalar(10 / smallestSide)
+
+            this.focusPoint.position.x -= mapMovement.x * 2
+            this.focusPoint.position.z -= mapMovement.y * 2
+
+            lastTouchX = avg.x
+            lastTouchY = avg.y
+
+            // Pinch zoom
+            if(e.touches.length >= 2)
+            {
+                const dist = this._touchPinchDist(e.touches)
+                if(lastPinchDist > 0)
+                {
+                    const pinchDelta = dist - lastPinchDist
+                    this.zoom.baseRatio += pinchDelta * 0.005
+                    this.zoom.baseRatio = clamp(this.zoom.baseRatio, 0, 1)
+                }
+                lastPinchDist = dist
+            }
+        }, { passive: true })
+
+        const onTouchEnd = (e) =>
+        {
+            if(e.touches.length === 0)
+            {
+                touchActive = false
+                lastPinchDist = 0
+            }
+            else
+            {
+                const avg = this._touchAvg(e.touches)
+                lastTouchX = avg.x
+                lastTouchY = avg.y
+                if(e.touches.length >= 2) lastPinchDist = this._touchPinchDist(e.touches)
+                else lastPinchDist = 0
+            }
+        }
+        canvas.addEventListener('touchend', onTouchEnd, { passive: true })
+        canvas.addEventListener('touchcancel', onTouchEnd, { passive: true })
+    }
+
+    _touchAvg(touches)
+    {
+        let x = 0, y = 0
+        for(let i = 0; i < touches.length; i++) { x += touches[i].clientX; y += touches[i].clientY }
+        return { x: x / touches.length, y: y / touches.length }
+    }
+
+    _touchPinchDist(touches)
+    {
+        if(touches.length < 2) return 0
+        const dx = touches[0].clientX - touches[1].clientX
+        const dy = touches[0].clientY - touches[1].clientY
+        return Math.sqrt(dx * dx + dy * dy)
     }
 
     update()
