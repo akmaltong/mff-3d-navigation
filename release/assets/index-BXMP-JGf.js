@@ -52627,16 +52627,16 @@ var<${s}> ${e} : ${h};`;
         for (const a of this.upcomingTouches) s += a.clientX, o += a.clientY;
         s /= this.upcomingTouches.length, o /= this.upcomingTouches.length, this.upcoming.x = s, this.upcoming.y = o;
       }, {
-        passive: false
+        passive: true
       }), this.element.addEventListener("touchstart", (r) => {
-        r.preventDefault(), this.mode = _Pointer.MODE_TOUCH, this.upcomingDown = true, this.upcomingTouches = [
+        this.mode = _Pointer.MODE_TOUCH, this.upcomingDown = true, this.upcomingTouches = [
           ...r.touches
         ];
         let s = 0, o = 0;
         for (const a of this.upcomingTouches) s += a.clientX, o += a.clientY;
         s /= this.upcomingTouches.length, o /= this.upcomingTouches.length, this.current.x = s, this.current.y = o, this.upcoming.x = s, this.upcoming.y = o;
       }, {
-        passive: false
+        passive: true
       }), this.element.addEventListener("touchend", (r) => {
         r.preventDefault(), this.upcomingTouches = [
           ...r.touches
@@ -95235,7 +95235,7 @@ https://github.com/browserify/crypto-browserify`);
       }, this.overlay = {
         moveOnTop: () => {
         }
-      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-Dk8k2CLz.js").then(async (m) => {
+      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-BrUWC5LD.js").then(async (m) => {
         await m.__tla;
         return m;
       }), [], import.meta.url), this.physics = new Physics(), this.wireframe = new PhysicsWireframe(), this.physicalVehicle = new PhysicsVehicle(), this.player = new Player(), this.reveal = new Reveal(), this.world.step(1), this.reveal.distance.value = 99999, this.reveal.updateStep(1), this.reveal.update = this.reveal.update.bind(this.reveal), this.ticker.events.on("tick", this.reveal.update, 10), this.settingsStorage = new SettingsStorage(), this.settingsStorage.loadZonePositions(zones), this.poiManager = new POIManager(), this.navMeshSystem = new NavMeshSystem(), this.navMeshSystem.load("Navmesh.glb").catch((s) => console.warn("NavMesh load failed:", s)), this.uiOverlay = new UIOverlay(), this.settingsStorage.applySettings(), this.focusPointGizmo.setVisible(false), this.uiOverlay.store.set("gameMode", true), this.view.focusPoint.isTracking = false, this.view.focusPoint.magnet.active = false;
