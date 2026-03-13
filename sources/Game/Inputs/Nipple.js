@@ -230,50 +230,7 @@ export class Nipple
 
     update()
     {
-        if(this.active || this.animated)
-        {
-            // Smallest angle and forward
-            this.smallestAngle = smallestAngle(this.angle, this.targetAngle)
-            let smallestAngleAbs = Math.abs(this.smallestAngle)
-
-            this.forward = smallestAngleAbs < this.forwardAmplitude / 2
-                
-            this.uniforms.forward.value = this.forward ? 1 : 0
-
-            // Recalculate, but backward
-            if(!this.forward)
-                this.smallestAngle = smallestAngle(this.angle + Math.PI, this.targetAngle)
-
-            if(this.forward)
-            {
-                this.uniforms.progressStartAngle.value = Math.min(0, this.smallestAngle)
-                this.uniforms.progressEndAngle.value = Math.max(0, this.smallestAngle)
-            }
-            else
-            {
-                if(this.smallestAngle > 0)
-                {
-                    this.uniforms.progressStartAngle.value = - Math.PI
-                    this.uniforms.progressEndAngle.value = - Math.PI + this.smallestAngle
-                }
-                else
-                {
-                    this.uniforms.progressStartAngle.value = Math.PI + this.smallestAngle
-                    this.uniforms.progressEndAngle.value = Math.PI
-                }
-            }
-
-            // Color multiplier
-            this.uniforms.colorMultiplier.value = this.progress === 1 ? 1.5 : 1
-
-            // Group visiblity
-            this.group.visible = true
-        }
-
-        else
-        {
-            // Hide
-            this.group.visible = false
-        }
+        // Hide nipple entirely — MFF nav app uses tap-to-navigate, not vehicle driving
+        this.group.visible = false
     }
 }

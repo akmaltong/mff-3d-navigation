@@ -99,7 +99,7 @@ export class MiniMap
 
     _updateVisibility()
     {
-        this.element.style.display = this.isOpen ? 'block' : 'none'
+        this.element.style.display = this.isOpen ? '' : 'none'
     }
 
     // Base mapping (before offsets)
@@ -211,8 +211,8 @@ export class MiniMap
         this.element.innerHTML = `
             ${controlsHtml}
             <div class="mff-minimap-canvas" style="position:relative;width:${w}px;height:${h}px;overflow:hidden">
-                <img src="MiniMap.png" style="position:absolute;top:0;left:0;width:${w}px;height:${h}px;object-fit:fill;opacity:0.85" alt="" draggable="false"/>
-                <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0">
+                <img src="MiniMap.png" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:fill;opacity:0.85" alt="" draggable="false"/>
+                <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%">
                     ${routeSvg}
                     ${circles}
                     ${labels}

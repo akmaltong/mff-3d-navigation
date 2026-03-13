@@ -9,7 +9,7 @@ export default ({ command }) => ({
     root: 'sources/', // Sources files (typically where index.html is)
     envDir: '../',  // Directory where the env file is located
     publicDir: '../static/', // Path from "root" to static assets (files that are served as they are)
-    base: command === 'build' ? '/mff-3d-navigation/' : './',
+    base: './',
     server:
     {
         // https: true,

@@ -1375,7 +1375,55 @@
     }
 
     .mff-minimap-wrapper {
-        display: none;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0;
+    }
+
+    .mff-minimap-wrapper .mff-minimap-toggle {
+        position: fixed;
+        top: max(8px, env(safe-area-inset-top, 8px));
+        right: 8px;
+        z-index: 920;
+    }
+
+    .mff-minimap-wrapper .mff-minimap {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        border-radius: 0;
+        border: none;
+        max-height: none;
+        background: rgba(20, 20, 30, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 915;
+    }
+
+    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas {
+        width: auto !important;
+        height: 100% !important;
+        max-height: calc(100vh - 64px);
+        aspect-ratio: 120 / 480;
+    }
+
+    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas img,
+    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas svg {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Hide vehicle controls on mobile */
+    .touch-buttons {
+        display: none !important;
     }
 
     .mff-fps-counter {
