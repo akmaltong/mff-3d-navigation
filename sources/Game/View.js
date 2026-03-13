@@ -637,7 +637,11 @@ export class View
         let touchActive = false
         let lastTouchX = 0
         let lastTouchY = 0
+        let startTouchX = 0
+        let startTouchY = 0
         let lastPinchDist = 0
+        let isDragging = false
+        const DRAG_THRESHOLD = 8 // px — below this, treat as tap (allow click synthesis)
 
         touchTarget.addEventListener('touchstart', (e) =>
         {
@@ -645,7 +649,10 @@ export class View
             const avg = this._touchAvg(e.touches)
             lastTouchX = avg.x
             lastTouchY = avg.y
+            startTouchX = avg.x
+            startTouchY = avg.y
             touchActive = true
+            isDragging = false
             if(e.touches.length >= 2) lastPinchDist = this._touchPinchDist(e.touches)
         }, { passive: true })
 
@@ -653,11 +660,21 @@ export class View
         {
             if(!touchActive || this.mode !== View.MODE_DEFAULT) return
 
-            e.preventDefault()
-
             const avg = this._touchAvg(e.touches)
             const dx = avg.x - lastTouchX
             const dy = avg.y - lastTouchY
+
+            // Check if we've moved past the drag threshold from start position
+            if(!isDragging)
+            {
+                const totalDx = avg.x - startTouchX
+                const totalDy = avg.y - startTouchY
+                if(Math.abs(totalDx) < DRAG_THRESHOLD && Math.abs(totalDy) < DRAG_THRESHOLD)
+                    return // Don't preventDefault — allow click synthesis for taps
+                isDragging = true
+            }
+
+            e.preventDefault()
 
             this.focusPoint.isTracking = false
             this.focusPoint.magnet.active = false
@@ -693,6 +710,7 @@ export class View
             if(e.touches.length === 0)
             {
                 touchActive = false
+                isDragging = false
                 lastPinchDist = 0
             }
             else
