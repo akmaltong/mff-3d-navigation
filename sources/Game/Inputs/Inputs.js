@@ -161,6 +161,11 @@ export class Inputs
         {
             if(this.mode !== Inputs.MODE_TOUCH)
                 return
+
+            // In game/map mode, don't process nipple (vehicle joystick)
+            const store = this.game?.uiOverlay?.store
+            if(store && store.gameMode)
+                return
                 
             this.nipple.updateFromPointer(this.pointer, action)
         })

@@ -629,6 +629,10 @@ export class View
                     this.zoom.baseRatio += this.game.inputs.pointer.pinch.distanceDelta * 0.005
                     this.zoom.baseRatio = clamp(this.zoom.baseRatio, 0, 1)
                 }
+                else if(action.trigger === 'end')
+                {
+                    // Touch ended — keep camera position, don't snap back
+                }
             }
         })
     }
