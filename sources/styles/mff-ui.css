@@ -1437,14 +1437,25 @@
         width: auto !important;
         height: 90vh !important;
         max-height: calc(100vh - 80px) !important;
-        aspect-ratio: auto !important;
+        aspect-ratio: 2013 / 8057 !important;
+        overflow: visible !important;
     }
 
-    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas img,
-    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas svg {
+    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas img {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100% !important;
         height: 100% !important;
-        object-fit: contain !important;
+        object-fit: fill !important;
+    }
+
+    .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
     }
 
     /* Hide vehicle controls on mobile */
