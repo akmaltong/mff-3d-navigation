@@ -85241,7 +85241,7 @@ https://github.com/browserify/crypto-browserify`);
         }
       ]), this.game.inputs.events.on("viewMapPointer", (e) => {
         if (this.mode === _View.MODE_DEFAULT && e.active) {
-          if (this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 2) {
+          if (this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 1) {
             this.focusPoint.isTracking = false, this.focusPoint.magnet.active = false;
             const r = new Vector2(this.game.inputs.pointer.delta.x, this.game.inputs.pointer.delta.y);
             r.rotateAround(new Vector2(), -this.spherical.theta);
@@ -94369,8 +94369,8 @@ https://github.com/browserify/crypto-browserify`);
   const MAP_CONFIG = {
     imgWidth: 2013,
     imgHeight: 8057,
-    displayWidth: 120,
-    displayHeight: 480,
+    displayWidth: 200,
+    displayHeight: 800,
     worldMinX: -82,
     worldMaxX: 18,
     worldMinZ: -10,
@@ -94382,80 +94382,80 @@ https://github.com/browserify/crypto-browserify`);
 </svg>`;
   let zoneOffsets = {
     "zone-1": {
-      dx: -3,
-      dy: 18
+      dx: -5,
+      dy: 30
     },
     "zone-2": {
-      dx: 3,
-      dy: -17
+      dx: 5,
+      dy: -28
     },
     "zone-3": {
-      dx: -5,
-      dy: 7
-    },
-    "zone-4": {
-      dx: 4,
-      dy: -4
-    },
-    "zone-5": {
-      dx: -6,
-      dy: -4
-    },
-    "zone-6": {
-      dx: -3,
+      dx: -8,
       dy: 12
     },
+    "zone-4": {
+      dx: 7,
+      dy: -7
+    },
+    "zone-5": {
+      dx: -10,
+      dy: -7
+    },
+    "zone-6": {
+      dx: -5,
+      dy: 20
+    },
     "zone-7": {
-      dx: -1,
-      dy: -3
+      dx: -2,
+      dy: -5
     },
     "zone-8": {
-      dx: -17,
-      dy: 2
+      dx: -28,
+      dy: 3
     },
     "zone-9": {
-      dx: 12,
-      dy: 4
+      dx: 20,
+      dy: 7
     },
     "zone-10": {
-      dx: -15,
-      dy: 11
+      dx: -25,
+      dy: 18
     },
     "zone-11": {
-      dx: 9,
-      dy: 9
+      dx: 15,
+      dy: 15
     },
     "zone-12": {
-      dx: 9,
-      dy: 7
+      dx: 15,
+      dy: 12
     },
     "zone-13": {
-      dx: -18,
-      dy: 7
+      dx: -30,
+      dy: 12
     },
     "zone-14": {
-      dx: -9,
-      dy: -4
+      dx: -15,
+      dy: -7
     },
     "zone-15": {
-      dx: 3,
+      dx: 5,
       dy: 0
     },
     "zone-16": {
-      dx: 3,
+      dx: 5,
       dy: 0
     },
     "zone-17": {
-      dx: -4,
-      dy: 5
+      dx: -7,
+      dy: 8
     },
     "zone-18": {
-      dx: -1,
-      dy: -7
+      dx: -2,
+      dy: -12
     },
     "zone-19": {
-      dx: -3,
-      dy: 4
+      dx: -5,
+      dy: 7
     }
   };
   try {
@@ -94496,35 +94496,35 @@ https://github.com/browserify/crypto-browserify`);
       let a = "", h = "", c = "";
       if (this.routePoints && this.routePoints.length >= 2) {
         const f = this.routePoints.map((R) => this._worldToMapBase(R[0], R[1])), p = f.map((R) => `${R.x},${R.y}`).join(" ");
-        a += `<polyline points="${p}" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>`;
+        a += `<polyline points="${p}" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>`;
         let v = 0;
         for (let R = 0; R < f.length - 1; R++) {
           const G = f[R + 1].x - f[R].x, O = f[R + 1].y - f[R].y;
           v += Math.sqrt(G * G + O * O);
         }
-        const M = Math.max(2, Math.floor(v / 14));
+        const M = Math.max(2, Math.floor(v / 22));
         for (let R = 0; R < M; R++) {
           const O = (R + 0.5) / M * v;
           let q = 0;
           for (let H = 0; H < f.length - 1; H++) {
             const z = f[H + 1].x - f[H].x, j = f[H + 1].y - f[H].y, Z = Math.sqrt(z * z + j * j);
             if (q + Z >= O) {
-              const J = Z > 0 ? (O - q) / Z : 0, ne = f[H].x + z * J, ee = f[H].y + j * J, be = Math.atan2(j, z) * (180 / Math.PI), U = 3;
-              a += `<g transform="translate(${ne},${ee}) rotate(${be})"><polyline points="${-U * 0.5},${-U * 0.4} ${U * 0.3},0 ${-U * 0.5},${U * 0.4}" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><polyline points="${U * 0},${-U * 0.4} ${U * 0.8},0 ${U * 0},${U * 0.4}" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></g>`;
+              const J = Z > 0 ? (O - q) / Z : 0, ne = f[H].x + z * J, ee = f[H].y + j * J, be = Math.atan2(j, z) * (180 / Math.PI), U = 5;
+              a += `<g transform="translate(${ne},${ee}) rotate(${be})"><polyline points="${-U * 0.5},${-U * 0.4} ${U * 0.3},0 ${-U * 0.5},${U * 0.4}" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><polyline points="${U * 0},${-U * 0.4} ${U * 0.8},0 ${U * 0},${U * 0.4}" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></g>`;
               break;
             }
             q += Z;
           }
         }
-        a += `<circle cx="${f[0].x}" cy="${f[0].y}" r="3" fill="#22c55e" opacity="0.8" stroke="white" stroke-width="0.5"/>`;
+        a += `<circle cx="${f[0].x}" cy="${f[0].y}" r="5" fill="#22c55e" opacity="0.8" stroke="white" stroke-width="1"/>`;
         const P = f[f.length - 1];
-        a += `<circle cx="${P.x}" cy="${P.y}" r="4" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0.8"><animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/></circle>`, a += `<circle cx="${P.x}" cy="${P.y}" r="2" fill="#22c55e" opacity="0.9"/>`;
+        a += `<circle cx="${P.x}" cy="${P.y}" r="6" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.8"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle>`, a += `<circle cx="${P.x}" cy="${P.y}" r="3" fill="#22c55e" opacity="0.9"/>`;
       }
       for (const f of zones) {
-        const p = this._worldToMap(f.position[0], f.position[2], f.id), v = f.id === o, x = this.calibrationMode ? 5 : v ? 4 : 2.5;
-        h += `<circle cx="${p.x}" cy="${p.y}" r="${x}" fill="${f.color}" opacity="0.9" stroke="white" stroke-width="${this.calibrationMode || v ? 1 : 0}" data-zone-id="${f.id}" style="cursor:${this.calibrationMode ? "grab" : "pointer"}"/>`;
+        const p = this._worldToMap(f.position[0], f.position[2], f.id), v = f.id === o, x = this.calibrationMode ? 8 : v ? 6 : 4;
+        h += `<circle cx="${p.x}" cy="${p.y}" r="${x}" fill="${f.color}" opacity="0.9" stroke="white" stroke-width="${this.calibrationMode || v ? 1.5 : 0.5}" data-zone-id="${f.id}" style="cursor:${this.calibrationMode ? "grab" : "pointer"}"/>`;
         const M = f.name.length > 10 ? f.name.slice(0, 10) : f.name;
-        c += `<text x="${p.x + 6}" y="${p.y + 2}" fill="white" font-size="${this.calibrationMode ? 5 : 4}" style="pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,0.8);stroke-width:2px">${M}</text>`;
+        c += `<text x="${p.x + 8}" y="${p.y + 3}" fill="white" font-size="${this.calibrationMode ? 8 : 6}" style="pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,0.8);stroke-width:2px">${M}</text>`;
       }
       let d = "";
       this.calibrationMode && (d = `<div style="display:flex;gap:4px;padding:4px">
@@ -94624,7 +94624,7 @@ https://github.com/browserify/crypto-browserify`);
       this._raycaster = new Raycaster(), this._mouse = new Vector2(), this._onMarkerClick = (e) => {
         var _a2, _b, _c, _d, _e;
         const r = this.game.canvasElement.getBoundingClientRect();
-        if (this._mouse.x = (e.clientX - r.left) / r.width * 2 - 1, this._mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1, this._raycaster.setFromCamera(this._mouse, this.game.view.camera), ((_b = (_a2 = this.game.poiManager) == null ? void 0 : _a2.drag) == null ? void 0 : _b.active) || ((_d = (_c = this.game.focusPointGizmo) == null ? void 0 : _c.drag) == null ? void 0 : _d.active)) return;
+        if (this._mouse.x = (e.clientX - r.left) / r.width * 2 - 1, this._mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1, this._raycaster.setFromCamera(this._mouse, this.game.view.camera), ((_b = (_a2 = this.game.poiManager) == null ? void 0 : _a2.drag) == null ? void 0 : _b.active) || ((_d = (_c = this.game.focusPointGizmo) == null ? void 0 : _c.drag) == null ? void 0 : _d.active) || !this.store.showPOI && this.store.activePanel !== "route") return;
         const s = [];
         this.zoneMarkerGroup.traverse((f) => {
           f.isMesh && s.push(f);
@@ -95178,7 +95178,7 @@ https://github.com/browserify/crypto-browserify`);
       }, this.overlay = {
         moveOnTop: () => {
         }
-      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-CL6CHt5U.js").then(async (m) => {
+      }, this.view = new View(), this.focusPointGizmo = new FocusPointGizmo(), this.rendering.setPostprocessing(), this.rendering.start(), this.lighting = new Lighting(), this.fog = new Fog(), this.materials = new Materials(), this.objects = new Objects(), this.world = new World(), this.RAPIER = await __vitePreload(() => import("./rapier-BzpkglxF.js").then(async (m) => {
         await m.__tla;
         return m;
       }), [], import.meta.url), this.physics = new Physics(), this.wireframe = new PhysicsWireframe(), this.physicalVehicle = new PhysicsVehicle(), this.player = new Player(), this.reveal = new Reveal(), this.world.step(1), this.reveal.distance.value = 99999, this.reveal.updateStep(1), this.reveal.update = this.reveal.update.bind(this.reveal), this.ticker.events.on("tick", this.reveal.update, 10), this.settingsStorage = new SettingsStorage(), this.settingsStorage.loadZonePositions(zones), this.poiManager = new POIManager(), this.navMeshSystem = new NavMeshSystem(), this.navMeshSystem.load("Navmesh.glb").catch((s) => console.warn("NavMesh load failed:", s)), this.uiOverlay = new UIOverlay(), this.settingsStorage.applySettings(), this.focusPointGizmo.setVisible(false), this.uiOverlay.store.set("gameMode", true), this.view.focusPoint.isTracking = false, this.view.focusPoint.magnet.active = false;

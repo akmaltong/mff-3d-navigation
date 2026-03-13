@@ -123,6 +123,9 @@ export class NavigationSystem
             if(this.game.poiManager?.drag?.active) return
             if(this.game.focusPointGizmo?.drag?.active) return
 
+            // Don't intercept clicks when POI markers are hidden
+            if(!this.store.showPOI && this.store.activePanel !== 'route') return
+
             const meshes = []
             this.zoneMarkerGroup.traverse(c => { if(c.isMesh) meshes.push(c) })
             const hits = this._raycaster.intersectObjects(meshes, false)

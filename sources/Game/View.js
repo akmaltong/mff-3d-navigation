@@ -610,7 +610,7 @@ export class View
                 if(action.active)
                 {
                     // Map
-                    if(this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 2)
+                    if(this.game.inputs.pointer.mode === Pointer.MODE_MOUSE || this.game.inputs.pointer.touches.length >= 1)
                     {
                         this.focusPoint.isTracking = false
                         this.focusPoint.magnet.active = false

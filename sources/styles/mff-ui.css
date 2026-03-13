@@ -1082,7 +1082,7 @@
     overflow: hidden;
     border: 1px solid rgba(212, 175, 55, 0.2);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    max-height: calc(100vh - 80px);
+    max-height: calc(90vh - 80px);
     overflow-y: auto;
     transition: opacity 0.3s ease;
 }
@@ -1401,7 +1401,7 @@
         border-radius: 0;
         border: none;
         max-height: none;
-        background: rgba(20, 20, 30, 0.95);
+        background: rgba(10, 10, 20, 0.97);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1410,9 +1410,8 @@
 
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas {
         width: auto !important;
-        height: 100% !important;
-        max-height: calc(100vh - 64px);
-        aspect-ratio: 120 / 480;
+        height: 90% !important;
+        max-height: calc(100vh - 80px);
     }
 
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas img,

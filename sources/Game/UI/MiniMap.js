@@ -9,8 +9,8 @@ import { zones } from './data/mockData.js'
 const MAP_CONFIG = {
     imgWidth: 2013,
     imgHeight: 8057,
-    displayWidth: 120,
-    displayHeight: 480,
+    displayWidth: 200,
+    displayHeight: 800,
     worldMinX: -82,
     worldMaxX: 18,
     worldMinZ: -10,
@@ -25,25 +25,25 @@ const ICON_MAP = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
 
 // Per-zone pixel offsets (display coords), calibrated manually.
 let zoneOffsets = {
-    'zone-1': { dx: -3, dy: 18 },
-    'zone-2': { dx: 3, dy: -17 },
-    'zone-3': { dx: -5, dy: 7 },
-    'zone-4': { dx: 4, dy: -4 },
-    'zone-5': { dx: -6, dy: -4 },
-    'zone-6': { dx: -3, dy: 12 },
-    'zone-7': { dx: -1, dy: -3 },
-    'zone-8': { dx: -17, dy: 2 },
-    'zone-9': { dx: 12, dy: 4 },
-    'zone-10': { dx: -15, dy: 11 },
-    'zone-11': { dx: 9, dy: 9 },
-    'zone-12': { dx: 9, dy: 7 },
-    'zone-13': { dx: -18, dy: 7 },
-    'zone-14': { dx: -9, dy: -4 },
-    'zone-15': { dx: 3, dy: 0 },
-    'zone-16': { dx: 3, dy: 0 },
-    'zone-17': { dx: -4, dy: 5 },
-    'zone-18': { dx: -1, dy: -7 },
-    'zone-19': { dx: -3, dy: 4 },
+    'zone-1': { dx: -5, dy: 30 },
+    'zone-2': { dx: 5, dy: -28 },
+    'zone-3': { dx: -8, dy: 12 },
+    'zone-4': { dx: 7, dy: -7 },
+    'zone-5': { dx: -10, dy: -7 },
+    'zone-6': { dx: -5, dy: 20 },
+    'zone-7': { dx: -2, dy: -5 },
+    'zone-8': { dx: -28, dy: 3 },
+    'zone-9': { dx: 20, dy: 7 },
+    'zone-10': { dx: -25, dy: 18 },
+    'zone-11': { dx: 15, dy: 15 },
+    'zone-12': { dx: 15, dy: 12 },
+    'zone-13': { dx: -30, dy: 12 },
+    'zone-14': { dx: -15, dy: -7 },
+    'zone-15': { dx: 5, dy: 0 },
+    'zone-16': { dx: 5, dy: 0 },
+    'zone-17': { dx: -7, dy: 8 },
+    'zone-18': { dx: -2, dy: -12 },
+    'zone-19': { dx: -5, dy: 7 },
 }
 
 // Override with localStorage if user recalibrated
@@ -145,7 +145,7 @@ export class MiniMap
         {
             const pts = this.routePoints.map(p => this._worldToMapBase(p[0], p[1]))
             const pathStr = pts.map(p => `${p.x},${p.y}`).join(' ')
-            routeSvg += `<polyline points="${pathStr}" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>`
+            routeSvg += `<polyline points="${pathStr}" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>`
 
             let totalLen = 0
             for(let i = 0; i < pts.length - 1; i++)
@@ -154,7 +154,7 @@ export class MiniMap
                 const dy = pts[i + 1].y - pts[i].y
                 totalLen += Math.sqrt(dx * dx + dy * dy)
             }
-            const chevronSpacing = 14
+            const chevronSpacing = 22
             const chevronCount = Math.max(2, Math.floor(totalLen / chevronSpacing))
             for(let ci = 0; ci < chevronCount; ci++)
             {
@@ -172,17 +172,17 @@ export class MiniMap
                         const cx = pts[i].x + dx * lt
                         const cy = pts[i].y + dy * lt
                         const angle = Math.atan2(dy, dx) * (180 / Math.PI)
-                        const s = 3
-                        routeSvg += `<g transform="translate(${cx},${cy}) rotate(${angle})"><polyline points="${-s*0.5},${-s*0.4} ${s*0.3},0 ${-s*0.5},${s*0.4}" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><polyline points="${s*0.0},${-s*0.4} ${s*0.8},0 ${s*0.0},${s*0.4}" fill="none" stroke="#22c55e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></g>`
+                        const s = 5
+                        routeSvg += `<g transform="translate(${cx},${cy}) rotate(${angle})"><polyline points="${-s*0.5},${-s*0.4} ${s*0.3},0 ${-s*0.5},${s*0.4}" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/><polyline points="${s*0.0},${-s*0.4} ${s*0.8},0 ${s*0.0},${s*0.4}" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></g>`
                         break
                     }
                     cumLen += segLen
                 }
             }
-            routeSvg += `<circle cx="${pts[0].x}" cy="${pts[0].y}" r="3" fill="#22c55e" opacity="0.8" stroke="white" stroke-width="0.5"/>`
+            routeSvg += `<circle cx="${pts[0].x}" cy="${pts[0].y}" r="5" fill="#22c55e" opacity="0.8" stroke="white" stroke-width="1"/>`
             const end = pts[pts.length - 1]
-            routeSvg += `<circle cx="${end.x}" cy="${end.y}" r="4" fill="none" stroke="#22c55e" stroke-width="1.2" opacity="0.8"><animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/></circle>`
-            routeSvg += `<circle cx="${end.x}" cy="${end.y}" r="2" fill="#22c55e" opacity="0.9"/>`
+            routeSvg += `<circle cx="${end.x}" cy="${end.y}" r="6" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.8"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle>`
+            routeSvg += `<circle cx="${end.x}" cy="${end.y}" r="3" fill="#22c55e" opacity="0.9"/>`
         }
 
         // Zone dots (draggable in calibration mode)
@@ -190,13 +190,13 @@ export class MiniMap
         {
             const p = this._worldToMap(zone.position[0], zone.position[2], zone.id)
             const isSelected = zone.id === selectedId
-            const r = this.calibrationMode ? 5 : (isSelected ? 4 : 2.5)
+            const r = this.calibrationMode ? 8 : (isSelected ? 6 : 4)
 
-            circles += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${zone.color}" opacity="0.9" stroke="white" stroke-width="${this.calibrationMode ? 1 : (isSelected ? 1 : 0)}" data-zone-id="${zone.id}" style="cursor:${this.calibrationMode ? 'grab' : 'pointer'}"/>`
+            circles += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${zone.color}" opacity="0.9" stroke="white" stroke-width="${this.calibrationMode ? 1.5 : (isSelected ? 1.5 : 0.5)}" data-zone-id="${zone.id}" style="cursor:${this.calibrationMode ? 'grab' : 'pointer'}"/>`
 
             // Always show short name in calibration mode
             const shortName = zone.name.length > 10 ? zone.name.slice(0, 10) : zone.name
-            labels += `<text x="${p.x + 6}" y="${p.y + 2}" fill="white" font-size="${this.calibrationMode ? 5 : 4}" style="pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,0.8);stroke-width:2px">${shortName}</text>`
+            labels += `<text x="${p.x + 8}" y="${p.y + 3}" fill="white" font-size="${this.calibrationMode ? 8 : 6}" style="pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,0.8);stroke-width:2px">${shortName}</text>`
         }
 
         let controlsHtml = ''
