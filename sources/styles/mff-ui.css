@@ -1091,6 +1091,31 @@
     display: block;
 }
 
+.mff-minimap-canvas {
+    position: relative;
+    width: 200px;
+    height: 800px;
+    overflow: hidden;
+}
+
+.mff-minimap-canvas img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    opacity: 0.85;
+}
+
+.mff-minimap-canvas svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* --------------------------------------------------------------------------
    34. Settings Panel - Wide variant & Tabs
    -------------------------------------------------------------------------- */
