@@ -1410,6 +1410,7 @@
         flex-direction: column;
         align-items: flex-end;
         gap: 0;
+        pointer-events: none;
     }
 
     .mff-minimap-wrapper .mff-minimap-toggle {
@@ -1417,6 +1418,7 @@
         top: max(8px, env(safe-area-inset-top, 8px));
         right: 8px;
         z-index: 920;
+        pointer-events: auto;
     }
 
     .mff-minimap-wrapper .mff-minimap {
@@ -1433,6 +1435,7 @@
         align-items: center;
         justify-content: center;
         z-index: 915;
+        pointer-events: auto;
     }
 
     .mff-minimap-wrapper .mff-minimap .mff-minimap-canvas {
